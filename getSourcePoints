@@ -1,0 +1,32 @@
+def perspect_transform(img,src,dst):
+    M=cv2.getPerspectiveTransform(src,dst)
+    wared=cv2.warpPerspective(img,M,(img.shape[1],img.shape[0]))
+    return wared
+
+dst=3
+bottom_offset=5
+croprd_image=grid_img[90:150,:]
+plt.imshow(croprd_image)
+gry=cv2.cvtColor(croprd_image,cv2.COLOR_BGR2GRAY)
+corners=cv2.goodFeaturesToTrack(gry,5,0.01,80)
+corners=np.int0(corners)
+x=[]
+y=[]
+for i in corners:
+    
+    b,n=i.ravel()
+    print(b,n)
+    x.append(b)
+    y.append(n)
+    #x[i],y[i]=i.ravel()
+
+source =np.float32([[x[2],y[2]+60],
+                  [x[3],y[3]+60],
+                  [x[0],y[0]+60],
+                   [x[1],y[1]+60]])         
+destination =np.float32([[img.shape[1]/2-dst,img.shape[0]-bottom_offset],
+                         [img.shape[1]/2+dst,img.shape[0]-bottom_offset],
+                         [img.shape[1]/2+dst,img.shape[0]-2*dst-bottom_offset],
+                         [img.shape[1]/2-dst,img.shape[0]-2*dst-bottom_offset]])
+warped= perspect_transform(grid_img,source,destination) 
+plt.imshow(warped)
